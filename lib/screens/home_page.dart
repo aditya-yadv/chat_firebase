@@ -28,9 +28,12 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.grey.shade300,
+        foregroundColor: Colors.black,
         title: Text(
-          'Home Page',
+          'Users',
         ),
+        centerTitle: true,
         actions: [
           // sign out button
           IconButton(onPressed: signOut, icon: Icon(Icons.logout)),
@@ -61,21 +64,32 @@ class _HomePageState extends State<HomePage> {
   // build individual user list items
   Widget _buildUserListItem(DocumentSnapshot document) {
     Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-    print(document.data);
+    // print(document.data);
 
     //display all users except current user
     if (_auth.currentUser!.email != data['email']) {
-      return ListTile(
-        title: Text(data['email']),
-        onTap: () {
-          // pass the clicked user's UID to the chat page
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => ChatPage(
-                      receiverUserEmail: data['email'],
-                      receiverUserID: data['uid'])));
-        },
+      return Card(
+        elevation: 2,
+        color: Colors.grey.shade300,
+        margin: EdgeInsets.all(8),
+        child: ListTile(
+          leading: CircleAvatar(
+            child: Icon(Icons.person_2_outlined),
+            backgroundColor: Colors.blue.shade500,
+            foregroundColor: Colors.white,
+          ),
+          title: Text(data['email']),
+          trailing: Icon(Icons.arrow_forward_ios),
+          onTap: () {
+            // pass the clicked user's UID to the chat page
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ChatPage(
+                        receiverUserEmail: data['email'],
+                        receiverUserID: data['uid'])));
+          },
+        ),
       );
     } else {
       //return empty container

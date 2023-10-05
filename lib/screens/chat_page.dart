@@ -1,5 +1,4 @@
 import 'package:chat_firebase/components/chat_bubble.dart';
-import 'package:chat_firebase/components/my_textfield.dart';
 import 'package:chat_firebase/services/chat/chat_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -8,6 +7,7 @@ import 'package:flutter/material.dart';
 class ChatPage extends StatefulWidget {
   final String receiverUserEmail;
   final String receiverUserID;
+
   const ChatPage(
       {super.key,
       required this.receiverUserEmail,
@@ -19,8 +19,14 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   final TextEditingController _messageController = TextEditingController();
+  final ScrollController _controller = ScrollController();
   final ChatService _chatService = ChatService();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
+  // to scroll the list to bottom
+  void _scrollDown() {
+    _controller.jumpTo(_controller.position.maxScrollExtent);
+  }
 
   // method to send the message
   void sendMessage() async {
@@ -29,14 +35,18 @@ class _ChatPageState extends State<ChatPage> {
           widget.receiverUserID, _messageController.text);
       // clear the controller
       _messageController.clear();
+      _scrollDown();
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey.shade200,
       appBar: AppBar(
         title: Text(widget.receiverUserEmail),
+        backgroundColor: Colors.grey.shade300,
+        foregroundColor: Colors.black,
       ),
       body: Column(
         children: [
@@ -55,22 +65,30 @@ class _ChatPageState extends State<ChatPage> {
   // build message list
   Widget _buildMessageList() {
     return StreamBuilder(
-        stream: _chatService.getMessages(
-            widget.receiverUserID, _firebaseAuth.currentUser!.uid),
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Text('Error' + snapshot.error.toString());
-          }
+      stream: _chatService.getMessages(
+          widget.receiverUserID, _firebaseAuth.currentUser!.uid),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Text('Error' + snapshot.error.toString());
+        }
 
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Text('Loading');
-          }
-          return ListView(
-            children: snapshot.data!.docs
-                .map((document) => _buildMessageItem(document))
-                .toList(),
-          );
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Text('Loading');
+        }
+
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          // Scroll to the bottom
+          _scrollDown();
         });
+
+        return ListView(
+          controller: _controller,
+          children: snapshot.data!.docs
+              .map((document) => _buildMessageItem(document))
+              .toList(),
+        );
+      },
+    );
   }
 
   // build message item
@@ -94,7 +112,10 @@ class _ChatPageState extends State<ChatPage> {
         children: [
           Text(data['senderEmail']),
           SizedBox(height: 2),
-          ChatBubble(message: data['message'])
+          ChatBubble(
+            message: data['message'],
+            isSender: data['senderId'] == _firebaseAuth.currentUser!.uid,
+          )
         ],
       ),
     );
@@ -108,18 +129,29 @@ class _ChatPageState extends State<ChatPage> {
         children: [
           // textfield
           Expanded(
-              child: MyTextField(
-                  controller: _messageController,
+            child: TextField(
+              controller: _messageController,
+              decoration: InputDecoration(
                   hintText: 'Enter Message',
-                  obscureText: false)),
+                  border: InputBorder.none,
+                  fillColor: Colors.white,
+                  filled: true),
+            ),
+          ),
+          SizedBox(
+            width: 8,
+          ),
 
           // send button
-          IconButton(
+          CircleAvatar(
+            child: IconButton(
               onPressed: sendMessage,
               icon: Icon(
                 Icons.arrow_upward,
-                size: 40,
-              ))
+                size: 25,
+              ),
+            ),
+          ),
         ],
       ),
     );

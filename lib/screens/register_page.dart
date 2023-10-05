@@ -43,71 +43,73 @@ class _RegisterPageState extends State<RegisterPage> {
       body: SafeArea(
         child: Center(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 25.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // logo
-                SizedBox(height: 20),
-                Icon(
-                  Icons.message,
-                  size: 100,
-                  color: Colors.grey[800],
-                ),
+            padding: const EdgeInsets.all(25.0),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // logo
+                  SizedBox(height: 20),
+                  Icon(
+                    Icons.message,
+                    size: 100,
+                    color: Colors.grey[800],
+                  ),
 
-                // create account message
-                SizedBox(height: 30),
-                Text(
-                  "Let\s create an account for you!",
-                  style: TextStyle(fontSize: 16),
-                ),
+                  // create account message
+                  SizedBox(height: 30),
+                  Text(
+                    "Let\s create an account for you!",
+                    style: TextStyle(fontSize: 16),
+                  ),
 
-                // email field
-                SizedBox(height: 20),
-                MyTextField(
-                  controller: emailController,
-                  hintText: 'Email',
-                  obscureText: false,
-                ),
+                  // email field
+                  SizedBox(height: 20),
+                  MyTextField(
+                    controller: emailController,
+                    hintText: 'Email',
+                    obscureText: false,
+                  ),
 
-                // password field
-                SizedBox(height: 10),
-                MyTextField(
-                  controller: passwordController,
-                  hintText: 'Password',
-                  obscureText: true,
-                ),
+                  // password field
+                  SizedBox(height: 10),
+                  MyTextField(
+                    controller: passwordController,
+                    hintText: 'Password',
+                    obscureText: true,
+                  ),
 
-                // confirm password field
-                SizedBox(height: 10),
-                MyTextField(
-                  controller: confirmController,
-                  hintText: 'Confirm Password',
-                  obscureText: true,
-                ),
+                  // confirm password field
+                  SizedBox(height: 10),
+                  MyTextField(
+                    controller: confirmController,
+                    hintText: 'Confirm Password',
+                    obscureText: true,
+                  ),
 
-                // signUp button
-                SizedBox(height: 20),
-                MyButton(onTab: signUp, text: 'SignUp'),
+                  // signUp button
+                  SizedBox(height: 20),
+                  MyButton(onTab: signUp, text: 'SignUp'),
 
-                //not a member?
-                SizedBox(height: 40),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('Already a member? '),
-                    GestureDetector(
-                      onTap: widget.onTap,
-                      child: Text(
-                        "Login Now",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
+                  //not a member?
+                  SizedBox(height: 40),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('Already a member? '),
+                      GestureDetector(
+                        onTap: widget.onTap,
+                        child: Text(
+                          "Login Now",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                )
-              ],
+                    ],
+                  )
+                ],
+              ),
             ),
           ),
         ),
